@@ -19,13 +19,19 @@ addEventListener('DOMContentLoaded', () => {
 
 async function getPlanet(id) {
   let planet;
-  try {
-    planet = await fetchPlanet(id)
-    planet.characters = await fetchCharacters(planet)
-    planet.films = await fetchFilms(planet)
-  }
-  catch (ex) {
-    console.error(`Error reading planet ${id} data.`, ex.message);
+  let storedPlanet = localStorage.getItem(`planet-${id}`);
+  if(!storedPlanet){
+    try {
+      planet = await fetchPlanet(id)
+      planet.characters = await fetchCharacters(planet)
+      planet.films = await fetchFilms(planet)
+      localStorage.setItem(`planet-${id}`, JSON.stringify(planet));
+    }
+    catch (ex) {
+      console.error(`Error reading planet ${id} data.`, ex.message);
+    }
+  } else {
+    planet = JSON.parse(localStorage.getItem(`planet-${id}`));
   }
   renderPlanet(planet);
 
@@ -46,7 +52,7 @@ async function fetchCharacters(planet) {
 async function fetchFilms(planet) {
   const url = `${baseUrl}/planets/${planet?.id}/films`;
   const films = await fetch(url)
-    .then(res => res.json())
+    .then(res => res.json());
   return films;
 }
 
