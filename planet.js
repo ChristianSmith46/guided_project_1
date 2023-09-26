@@ -31,7 +31,7 @@ async function getPlanet(id) {
       console.error(`Error reading planet ${id} data.`, ex.message);
     }
   } else {
-    planet = JSON.parse(localStorage.getItem(`planet-${id}`));
+    planet = JSON.parse(storedPlanet);
   }
   renderPlanet(planet);
 
